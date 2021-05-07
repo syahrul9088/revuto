@@ -29,7 +29,7 @@ const functionRegist = (reff, first, last, email) => new Promise((resolve, rejec
        .catch(err => reject(err))
    });
 
-const functionGetLink = (nickname) =>
+const functionGetLink = (nickname, domain) =>
    new Promise((resolve, reject) => {
        fetch(`https://generator.email/`, {
            method: "get",
@@ -37,7 +37,7 @@ const functionGetLink = (nickname) =>
                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
                'accept-encoding': 'gzip, deflate, br',
                'accept-language': 'en-US,en;q=0.9',
-               'cookie': `_ga=GA1.2.1434039633.1579610017; _gid=GA1.2.374838364.1579610017; _gat=1; surl=mailpluss.com%2F${nickname}`,
+               'cookie': `_ga=GA1.2.1434039633.1579610017; _gid=GA1.2.374838364.1579610017; _gat=1; surl=${domain}%2F${nickname}`,
                'sec-fetch-mode': 'navigate',
                'sec-fetch-site': 'same-origin',
                'upgrade-insecure-requests': 1,
@@ -87,13 +87,14 @@ const functionSetPassword = (idChange) => new Promise((resolve, reject) => {
             const first = random.first()
             const last = random.last()
             const rand = randomize('0', 5)
-            const email = `${first}${rand}@mailpluss.com`.toLocaleLowerCase()
+            const domain = `gddao.com`
+            const email = `${first}${rand}@${domain}`.toLocaleLowerCase()
             console.log(`[+] Email: ${email}`)
             const regist = await functionRegist(reff, first, last, email)
             if(regist.hasOwnProperty('id')){
                 console.log('[+] Berhasil mengirim link')
                 do {
-                    var getLink = await functionGetLink(`${first}${rand}`)
+                    var getLink = await functionGetLink(`${first}${rand}`, domain)
                     console.log('[!] Mencoba mendapatkan link..')
                 } while (getLink == undefined)
                 const idChange = getLink.split('/')[4]
