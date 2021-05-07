@@ -101,35 +101,30 @@ const functionSetPassword = (idChange) => new Promise((resolve, reject) => {
         try {
             do {
                 var domain = await functionGetDomain()
-                var first = random.first()
-                var last = random.last()
-                var rand = randomize('0', 5)
-                var email = `${first}${rand}@${domain}`.toLocaleLowerCase()
-                console.log(`[+] Email: ${email}`)
-                var regist = await functionRegist(reff, first, last, email)
-                if(regist.hasOwnProperty('id')){
-                    console.log(`[+] Domain ${domain} support`)
-                } else {
-                    console.log(`[!] Domain ${domain} tidak support\n`)
-                }
-            }while(!regist.hasOwnProperty('id'))
-
-            if(regist.hasOwnProperty('id')){
-                console.log('[+] Berhasil mengirim link')
                 do {
-                    var getLink = await functionGetLink(`${first}${rand}`, domain)
-                    console.log('[!] Mencoba mendapatkan link..')
-                } while (getLink == undefined)
-                const idChange = getLink.split('/')[4]
-                const changePwd = await functionSetPassword(idChange)
-                if(changePwd.hasOwnProperty('token')){
-                    console.log('[+] Set password sukses\n')
-                } else {
-                    console.log(`[!] Failed set password !\n`)
-                }
-            } else {
-                console.log('[!] Gagal mengirim link !\n')
-            }
+                    var first = random.first()
+                    var last = random.last()
+                    var rand = randomize('0', 5)
+                    var email = `${first}${rand}@${domain}`.toLocaleLowerCase()
+                    console.log(`[+] Email: ${email}`)
+                    var regist = await functionRegist(reff, first, last, email)
+                    if(regist.hasOwnProperty('id')){
+                        console.log('[+] Berhasil mengirim link')
+                        do {
+                            var getLink = await functionGetLink(`${first}${rand}`, domain)
+                            console.log('[!] Mencoba mendapatkan link..')
+                        } while (getLink == undefined)
+                        const idChange = getLink.split('/')[4]
+                        const changePwd = await functionSetPassword(idChange)
+                        if(changePwd.hasOwnProperty('token')){
+                            console.log('[+] Set password sukses\n')
+                        } else {
+                            console.log(`[!] Failed set password !\n`)
+                        }
+                    }
+                } while(regist.hasOwnProperty('id'))
+                console.log(`[!] Domain ${domain} tidak support\n`)
+            }while(!regist.hasOwnProperty('id'))
         } catch (e) {
             console.log(e)
         }
