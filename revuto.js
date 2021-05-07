@@ -53,6 +53,21 @@ const functionGetLink = (nickname, domain) =>
             .catch(err => reject(err));
 });
 
+
+const functionGetDomain = () =>
+   new Promise((resolve, reject) => {
+       fetch(`https://generator.email/`, {
+           method: "get"
+       })
+       .then(res => res.text())
+            .then(text => {
+                const $ = cheerio.load(text);
+                const src = $("#domainName2").attr('value')
+                resolve(src);
+            })
+            .catch(err => reject(err));
+});
+
 const functionSetPassword = (idChange) => new Promise((resolve, reject) => {
     const bodys = {
         "token":idChange,"password":"Berak321#"
@@ -84,13 +99,21 @@ const functionSetPassword = (idChange) => new Promise((resolve, reject) => {
     console.log("")
     for(var i = 0; i < jml; i++){
         try {
-            const first = random.first()
-            const last = random.last()
-            const rand = randomize('0', 5)
-            const domain = `gddao.com`
-            const email = `${first}${rand}@${domain}`.toLocaleLowerCase()
-            console.log(`[+] Email: ${email}`)
-            const regist = await functionRegist(reff, first, last, email)
+            do {
+                var domain = await functionGetDomain()
+                var first = random.first()
+                var last = random.last()
+                var rand = randomize('0', 5)
+                var email = `${first}${rand}@${domain}`.toLocaleLowerCase()
+                console.log(`[+] Email: ${email}`)
+                var regist = await functionRegist(reff, first, last, email)
+                if(regist.hasOwnProperty('id')){
+                    console.log(`[+] Domain ${domain} support`)
+                } else {
+                    console.log(`[!] Domain ${domain} tidak support\n`)
+                }
+            }while(!regist.hasOwnProperty('id'))
+
             if(regist.hasOwnProperty('id')){
                 console.log('[+] Berhasil mengirim link')
                 do {
